@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Иллюзия и истина</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            color: #0f0;
+            overflow: hidden;
+            cursor: none;
+            user-select: none;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+        }
+
+        .game-interface {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 20, 0, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #0f0;
+            color: #0f0;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 30px #0f0;
+            min-width: 500px;
+            max-width: 600px;
+        }
+
+        .game-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
+            border-bottom: 1px solid #0f0;
+            padding-bottom: 10px;
+        }
+
+        .instructions {
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 14px;
+            line-height: 1.4;
+            background: rgba(0, 30, 0, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #0f0;
+        }
+
+        .instruction-section {
+            margin-bottom: 15px;
+        }
+
+        .instruction-title {
+            color: #ff0;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .status-item {
+            margin: 8px 0;
+            padding-left: 10px;
+            border-left: 2px solid #0f0;
+        }
+
+        .truth { color: #0f0; }
+        .illusion { color: #ff0; }
+        .empty { color: #f00; }
+
+        .warning {
+            color: #f00;
+            font-size: 12px;
+            margin-top: 15px;
+            padding: 8px;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 4px;
+            border: 1px solid #f00;
+        }
+
+        .input-container {
+            margin: 20px 0;
+        }
+
+        .number-input {
+            background: #000;
+            border: 2px solid #0f0;
+            color: #0f0;
+            font-size: 24px;
+            padding: 15px;
+            width: 150px;
+            text-align: center;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 5px;
+        }
+
+        .number-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px #0f0;
+        }
+
+        .submit-btn {
+            background: #000;
+            border: 2px solid #0f0;
+            color: #0f0;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #0f0;
+            color: #000;
+            box-shadow: 0 0 20px #0f0;
+        }
+
+        .attempts-counter {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #0f0;
+        }
+
+        .result-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0, 30, 0, 0.8);
+            border: 1px solid #0f0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 18px;
+        }
+
+        .dark-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.99);
+            pointer-events: none;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .dark-overlay.flashlight-active {
+            background: radial-gradient(
+                circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                transparent 60px,
+                rgba(0, 0, 0, 0.95) 120px,
+                rgba(0, 0, 0, 0.98) 100%
+            );
+        }
+
+        .stream {
+            position: absolute;
+            top: -50px;
+            color: #0f0;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1.2;
+            text-shadow: 0 0 8px #0f0;
+            white-space: nowrap;
+            animation: fall linear infinite;
+            z-index: 1;
+            filter: brightness(0.6);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stream.active {
+            filter: brightness(1.5);
+            text-shadow: 0 0 20px #0f0, 0 0 40px #0f0;
+        }
+
+        .stream.found {
+            filter: brightness(2);
+            color: #ff0;
+        }
+
+        .stream.wrong {
+            filter: brightness(1.2);
+            color: #f00;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .phone-digit {
+            color: #000 !important;
+            background: linear-gradient(45deg, #0f0, #ff0);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bolder;
+            text-shadow: none;
+            border: 1px solid #0f0;
+            display: inline-block;
+        }
+
+        .floating-notifications {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            pointer-events: none;
+        }
+
+        .floating-notification {
+            background: rgba(0, 30, 0, 0.95);
+            color: #0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #0f0;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 0 15px #0f0;
+            animation: floatUp 0.5s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
+            opacity: 1;
+        }
+
+        .floating-notification.wrong {
+            background: rgba(50, 0, 0, 0.95);
+            color: #f00;
+            border: 1px solid #f00;
+            box-shadow: 0 0 15px #f00;
+        }
+
+        .reset-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(50, 0, 0, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #f00;
+            color: #f00;
+            z-index: 1001;
+            font-size: 20px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 0 40px #f00;
+            animation: pulseRed 2s ease-in-out infinite;
+            max-width: 500px;
+            line-height: 1.5;
+        }
+
+        .reset-message.show {
+            display: block;
+        }
+
+        .completion-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 30, 0, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #0f0;
+            color: #0f0;
+            z-index: 1001;
+            font-size: 24px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 0 40px #0f0;
+            animation: celebration 2s ease-in-out infinite;
+            max-width: 500px;
+        }
+
+        .completion-message.show {
+            display: block;
+        }
+
+        .stage2-stats {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 20, 0, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-size: 12px;
+            box-shadow: 0 0 15px #0f0;
+            opacity: 0.8;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes pulseRed {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 40px #f00;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+                box-shadow: 0 0 60px #f00, 0 0 80px #f00;
+            }
+        }
+
+        @keyframes celebration {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 40px #0f0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+                box-shadow: 0 0 60px #0f0, 0 0 80px #0f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-interface" id="stage1">
+            <div class="game-title">СЫГРАЙ В ИГРУ</div>
+            <div class="instructions">
+                <div class="instruction-section">
+                    <div class="instruction-title">НАЧИНАЙТЕ ВЗЛОМ</div>
+                    <div>ЦЕЛЬ: Обойти протоколы безопасности и подобрать 3-значный код. Все символы уникальны.</div>
+                </div>
+                <div class="instruction-section">
+                    <div class="instruction-title">СИСТЕМА АНАЛИЗА:</div>
+                    <div class="status-item truth">[ИСТИНА] — Сигнал чистый. Цифра не только угадана, но и находится на своём, правильном месте.</div>
+                    <div class="status-item illusion">[ИЛЛЮЗИЯ] — Шум! Цифра угадана, но её местоположение неверно. Не доверяйте сигналу.</div>
+                    <div class="status-item empty">[ПУСТО] — Эта цифра в загаданном числе отсутствует.</div>
+                </div>
+            </div>
+            <div class="input-container">
+                <input type="text" class="number-input" id="numberInput" maxlength="3" placeholder="000" autocomplete="off">
+            </div>
+            <button class="submit-btn" onclick="submitGuess()">ЗАПУСТИТЬ СКАНИРОВАНИЕ</button>
+            <div class="attempts-counter">ПОПЫТКИ ВЗЛОМА: <span id="attemptsCount">0</span>/8</div>
+            <div class="result-message" id="resultMessage">
+                ВВЕДИТЕ КОД ДЛЯ СКАНИРОВАНИЯ...
+            </div>
+        </div>
+
+        <div class="flashlight-stage" id="stage2">
+            <div id="matrixContainer"></div>
+            <div class="dark-overlay" id="darkOverlay"></div>
+            <div class="floating-notifications" id="floatingNotifications"></div>
+            <div class="reset-message" id="resetMessage"></div>
+            <div class="completion-message" id="completionMessage"></div>
+            <div class="stage2-stats">
+                Найдено цифр: <span id="foundCount">0</span>/11<br>
+                Время: <span id="timer">0</span> сек<br>
+                Статус: <span id="status">В темноте</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class IllusionAndTruth {
+            constructor() {
+                this.stage1 = document.getElementById('stage1');
+                this.stage2 = document.getElementById('stage2');
+                this.numberInput = document.getElementById('numberInput');
+                this.resultMessage = document.getElementById('resultMessage');
+                this.attemptsCount = document.getElementById('attemptsCount');
+                this.resetMessage = document.getElementById('resetMessage');
+                this.currentNumber = this.generateNumber();
+                this.attempts = 0;
+                this.maxAttempts = 8; // Set to 8 as per HTML
+                this.matrix = null;
+
+                this.init();
+            }
+
+            init() {
+                this.stage1.style.display = 'block';
+                this.stage2.style.display = 'none';
+                this.numberInput.focus();
+                this.setupProtection();
+                this.setupStage1EventListeners();
+            }
+
+            setupProtection() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C')) || (e.ctrlKey && e.key === 'u')) {
+                        e.preventDefault();
+                        this.showAccessDenied();
+                    }
+                });
+
+                document.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    this.showAccessDenied();
+                });
+
+                setInterval(() => {
+                    const widthThreshold = window.outerWidth - window.innerWidth > 100;
+                    const heightThreshold = window.outerHeight - window.innerHeight > 100;
+                    if (widthThreshold || heightThreshold) {
+                        this.showAccessDenied();
+                    }
+                }, 1000);
+
+                let element = new Image();
+                Object.defineProperty(element, 'id', {
+                    get: () => {
+                        this.showAccessDenied();
+                    }
+                });
+            }
+
+            showAccessDenied() {
+                const accessDenied = document.createElement('div');
+                accessDenied.className = 'reset-message';
+                accessDenied.innerHTML = '<div>ДОСТУП ЗАПРЕЩЕН!<br>Обнаружена попытка взлома системы!</div>';
+                document.body.appendChild(accessDenied);
+                accessDenied.classList.add('show');
+                this.stage1.style.display = 'none';
+                this.stage2.style.display = 'none';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            }
+
+            setupStage1EventListeners() {
+                this.numberInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+                    if (e.target.value.length > 3) {
+                        e.target.value = e.target.value.slice(0, 3);
+                    }
+                });
+
+                this.numberInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.submitGuess();
+                    }
+                });
+            }
+
+            generateNumber() {
+                const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                const result = [];
+                for (let i = 0; i < 3; i++) {
+                    const randomIndex = Math.floor(Math.random() * digits.length);
+                    result.push(digits.splice(randomIndex, 1)[0]);
+                }
+                return result.join('');
+            }
+
+            validateGuess(guess) {
+                if (guess.length !== 3 || !/^\d{3}$/.test(guess)) return false;
+                return new Set(guess.split('')).size === 3;
+            }
+
+            checkGuess(guess) {
+                const target = this.currentNumber.split('');
+                let truth = 0, illusion = 0;
+
+                for (let i = 0; i < 3; i++) {
+                    if (guess[i] === target[i]) {
+                        truth++;
+                    } else if (target.includes(guess[i])) {
+                        illusion++;
+                    }
+                }
+
+                return { truth, illusion, empty: 3 - truth - illusion };
+            }
+
+            submitGuess() {
+                const guess = this.numberInput.value.trim();
+                if (!this.validateGuess(guess)) {
+                    this.showResult('ОШИБКА: ВВЕДИТЕ РОВНО 3 УНИКАЛЬНЫЕ ЦИФРЫ', 'error');
+                    return;
+                }
+
+                this.attempts++;
+                this.attemptsCount.textContent = this.attempts;
+
+                const result = this.checkGuess(guess);
+                let message = '';
+                if (result.truth === 0 && result.illusion === 0) {
+                    message = 'СТАТУС: ПУСТО<br><small>Сигнал не обнаружен</small>';
+                } else {
+                    const truthText = result.truth > 0 ? `${result.truth} ИСТИН${this.getEnding(result.truth, 'А', 'Ы', '')}` : '';
+                    const illusionText = result.illusion > 0 ? `${result.illusion} ИЛЛЮЗИ${this.getEnding(result.illusion, 'Я', 'Й', 'Й')}` : '';
+                    message = `СТАТУС: ${truthText}${truthText && illusionText ? ' И ' : ''}${illusionText}<br><small>Анализ сигнала...</small>`;
+                }
+                this.showResult(message, 'info');
+
+                if (result.truth === 3) {
+                    this.showStage1Completion();
+                    return;
+                }
+
+                if (this.attempts >= this.maxAttempts) {
+                    this.showResetMessage();
+                    setTimeout(() => {
+                        window.location.reload(); // Reload page to start new game
+                    }, 3000);
+                    return;
+                }
+
+                this.numberInput.value = '';
+                this.numberInput.focus();
+            }
+
+            getEnding(number, one, two, five) {
+                number = Math.abs(number);
+                number %= 100;
+                if (number >= 5 && number <= 20) return five;
+                number %= 10;
+                if (number === 1) return one;
+                if (number >= 2 && number <= 4) return two;
+                return five;
+            }
+
+            showResult(message, type) {
+                const colors = { error: '#f00', info: '#0f0', warning: '#ff0' };
+                this.resultMessage.innerHTML = message;
+                this.resultMessage.style.borderColor = colors[type] || '#0f0';
+                this.resultMessage.style.color = colors[type] || '#0f0';
+            }
+
+            showStage1Completion() {
+                this.resetMessage.innerHTML = `
+                    <h2>УРОВЕНЬ 1 ПРОЙДЕН!</h2>
+                    <p>Код доступа: <strong style="color: #ff0; font-size: 32px;">${this.currentNumber}</strong></p>
+                    <p>Попыток взлома: ${this.attempts}</p>
+                    <p style="font-size: 16px; margin-top: 20px; color: #0f0;">
+                        АКТИВИРОВАН РЕЖИМ СКАНИРОВАНИЯ
+                    </p>
+                    <p style="font-size: 14px; margin-top: 10px;">
+                        Переход на Уровень 2...
+                    </p>
+                `;
+                this.resetMessage.classList.add('show');
+                this.resetMessage.style.borderColor = '#0f0';
+                this.resetMessage.style.color = '#0f0';
+                setTimeout(() => {
+                    this.resetMessage.classList.remove('show');
+                    this.startStage2();
+                }, 4000);
+            }
+
+            showResetMessage() {
+                this.resetMessage.innerHTML = `
+                    <h2>🚨 СБОЙ В СИСТЕМЕ</h2>
+                    <p>ПРЕВЫШЕН ЛИМИТ ПОПЫТОК</p>
+                    <p style="font-size: 14px; margin-top: 15px;">
+                        Система перезагрузится через 3 секунды...
+                    </p>
+                `;
+                this.resetMessage.classList.add('show');
+            }
+
+            startStage2() {
+                this.stage1.style.display = 'none';
+                this.stage2.style.display = 'block';
+                this.matrix = new DarkPhoneMatrix();
+            }
+        }
+
+        class DarkPhoneMatrix {
+            constructor() {
+                this.container = document.getElementById('matrixContainer');
+                this.darkOverlay = document.getElementById('darkOverlay');
+                this.floatingNotifications = document.getElementById('floatingNotifications');
+                this.resetMessage = document.getElementById('resetMessage');
+                this.completionMessage = document.getElementById('completionMessage');
+                this.streams = [];
+                this.foundDigits = [];
+                this.currentDigitIndex = 0;
+                this.phoneNumber = '89124365870';
+                this.phoneDigits = this.phoneNumber.split('');
+                this.currentDigit = this.phoneDigits[this.currentDigitIndex];
+                this.startTime = Date.now();
+                this.isFlashlightActive = false;
+                this.typedWord = '';
+                this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                this.isRunning = true;
+
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.createStreams();
+                this.startTimers();
+                this.updateStats();
+            }
+
+            setupEventListeners() {
+                document.addEventListener('mousemove', (e) => {
+                    this.updateMousePosition(e.clientX, e.clientY);
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key.length === 1) {
+                        this.typedWord += e.key.toLowerCase();
+                        if (this.typedWord.slice(-5) === 'light') {
+                            this.activateFlashlight();
+                            this.typedWord = '';
+                        }
+                        if (this.typedWord.length > 10) {
+                            this.typedWord = this.typedWord.slice(-10);
+                        }
+                    }
+                });
+            }
+
+            updateMousePosition(x, y) {
+                if (this.isFlashlightActive) {
+                    this.darkOverlay.style.setProperty('--mouse-x', x + 'px');
+                    this.darkOverlay.style.setProperty('--mouse-y', y + 'px');
+                }
+                this.highlightNearbyStreams(x, y);
+            }
+
+            highlightNearbyStreams(mouseX, mouseY) {
+                if (!this.isFlashlightActive) return;
+                const highlightRadius = 80;
+                this.streams.forEach(streamData => {
+                    const streamRect = streamData.element.getBoundingClientRect();
+                    const streamX = streamRect.left + streamRect.width / 2;
+                    const streamY = streamRect.top + streamRect.height / 2;
+                    const distance = Math.sqrt(
+                        Math.pow(streamX - mouseX, 2) + Math.pow(streamY - mouseY, 2)
+                    );
+                    if (distance < highlightRadius) {
+                        streamData.element.classList.add('active');
+                    } else {
+                        streamData.element.classList.remove('active');
+                    }
+                });
+            }
+
+            handleDigitClick(clickedDigit, streamData) {
+                if (clickedDigit === this.currentDigit) {
+                    this.foundDigits.push(clickedDigit);
+                    this.showFloatingNotification(clickedDigit, this.foundDigits.length, true);
+                    streamData.element.classList.add('found');
+                    streamData.element.classList.remove('active');
+                    this.currentDigitIndex++;
+                    if (this.currentDigitIndex < this.phoneDigits.length) {
+                        this.currentDigit = this.phoneDigits[this.currentDigitIndex];
+                        this.updateStats();
+                    } else {
+                        setTimeout(() => {
+                            this.showCompletionMessage();
+                        }, 1000);
+                    }
+                } else {
+                    this.showFloatingNotification(clickedDigit, this.foundDigits.length, false);
+                    streamData.element.classList.add('wrong');
+                    setTimeout(() => {
+                        streamData.element.classList.remove('wrong');
+                    }, 500);
+                    this.showResetMessage();
+                    setTimeout(() => {
+                        this.resetGame();
+                    }, 3000);
+                }
+            }
+
+            showFloatingNotification(digit, count, isCorrect) {
+                const notification = document.createElement('div');
+                notification.className = `floating-notification ${isCorrect ? '' : 'wrong'}`;
+                notification.textContent = isCorrect
+                    ? `✅ Найдена цифра ${digit} (${count}/11)`
+                    : `❌ Ошибка! Неверная цифра`;
+                this.floatingNotifications.appendChild(notification);
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+            }
+
+            showResetMessage() {
+                this.resetMessage.innerHTML = `
+                    <h2>🚨 СБОЙ В СИСТЕМЕ</h2>
+                    <p>Неверная цифра!</p>
+                    <p>Игра перезапустится через 3 секунды...</p>
+                `;
+                this.resetMessage.classList.add('show');
+            }
+
+            resetGame() {
+                this.resetMessage.classList.remove('show');
+                this.foundDigits = [];
+                this.currentDigitIndex = 0;
+                this.currentDigit = this.phoneDigits[this.currentDigitIndex];
+                this.startTime = Date.now();
+                this.streams.forEach(streamData => {
+                    streamData.element.classList.remove('found', 'active', 'wrong');
+                });
+                this.updateStats();
+            }
+
+            createStreams() {
+                const screenWidth = window.innerWidth;
+                const columnWidth = screenWidth / 11;
+                for (let columnIndex = 0; columnIndex < 11; columnIndex++) {
+                    const digit = this.phoneDigits[columnIndex];
+                    const columnPosition = (columnIndex * columnWidth) + (columnWidth / 2);
+                    const stream = document.createElement('div');
+                    stream.className = 'stream';
+                    const positionVariation = (Math.random() - 0.5) * (columnWidth - 30);
+                    stream.style.left = (columnPosition + positionVariation) + 'px';
+                    const duration = 8 + Math.random() * 6;
+                    stream.style.animationDuration = duration + 's';
+                    stream.style.animationDelay = Math.random() * 5 + 's';
+                    const textLength = 15 + Math.floor(Math.random() * 10);
+                    let content = '';
+                    const digitPosition = Math.floor(Math.random() * textLength);
+                    for (let i = 0; i < textLength; i++) {
+                        if (i === digitPosition) {
+                            content += `<span class="phone-digit">${digit}</span>`;
+                        } else {
+                            const randomChar = this.chars[Math.floor(Math.random() * this.chars.length)];
+                            content += randomChar;
+                        }
+                    }
+                    stream.innerHTML = content;
+                    stream.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.handleDigitClick(digit, { element: stream });
+                    });
+                    this.container.appendChild(stream);
+                    this.streams.push({
+                        element: stream,
+                        digit: digit,
+                        columnIndex: columnIndex
+                    });
+                }
+                this.createBackgroundStreams();
+            }
+
+            createBackgroundStreams() {
+                const screenWidth = window.innerWidth;
+                const columnWidth = screenWidth / 11;
+                const backgroundStreamCount = 20;
+                for (let i = 0; i < backgroundStreamCount; i++) {
+                    const stream = document.createElement('div');
+                    stream.className = 'stream';
+                    const randomColumn = Math.floor(Math.random() * 11);
+                    const columnPosition = (randomColumn * columnWidth) + (columnWidth / 2);
+                    const positionVariation = (Math.random() - 0.5) * (columnWidth - 30);
+                    stream.style.left = (columnPosition + positionVariation) + 'px';
+                    const duration = 6 + Math.random() * 8;
+                    stream.style.animationDuration = duration + 's';
+                    stream.style.animationDelay = Math.random() * 10 + 's';
+                    const textLength = 20 + Math.floor(Math.random() * 15);
+                    let content = '';
+                    for (let j = 0; j < textLength; j++) {
+                        const randomChar = this.chars[Math.floor(Math.random() * this.chars.length)];
+                        content += randomChar;
+                    }
+                    stream.innerHTML = content;
+                    stream.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.handleDigitClick('', { element: stream });
+                    });
+                    this.container.appendChild(stream);
+                    this.streams.push({ element: stream });
+                }
+            }
+
+            startTimers() {
+                setInterval(() => {
+                    if (this.isRunning) {
+                        const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                        document.getElementById('timer').textContent = elapsed;
+                    }
+                }, 1000);
+            }
+
+            updateStats() {
+                document.getElementById('foundCount').textContent = this.foundDigits.length;
+                document.getElementById('status').textContent = this.isFlashlightActive ? 'Фонарик активирован' : 'В темноте';
+            }
+
+            activateFlashlight() {
+                this.isFlashlightActive = true;
+                document.body.classList.add('flashlight-active');
+                this.darkOverlay.classList.add('flashlight-active');
+                document.getElementById('status').textContent = 'Фонарик активирован';
+                this.showFloatingNotification('🔦 ФОНАРИК АКТИВИРОВАН', this.foundDigits.length, true);
+            }
+
+            showCompletionMessage() {
+                this.completionMessage.innerHTML = `
+                    <h2>ВЫ СОБРАЛИ ВЕСЬ НОМЕР!</h2>
+                    <p style="font-size: 28px; margin: 20px 0; color: #ff0;">${this.phoneNumber}</p>
+                    <p>ПОЗДРАВЛЯЕМ ВАС!</p>
+                    <p style="font-size: 16px; margin-top: 15px; opacity: 0.8;">
+                        Время: ${Math.floor((Date.now() - this.startTime) / 1000)} секунд
+                    </p>
+                `;
+                this.completionMessage.classList.add('show');
+                this.isRunning = false;
+            }
+        }
+
+        let game;
+        window.addEventListener('load', () => {
+            game = new IllusionAndTruth();
+        });
+
+        function submitGuess() {
+            game.submitGuess();
+        }
+
+        window.addEventListener('resize', () => {
+            if (game.matrix && game.matrix.isRunning) {
+                document.getElementById('matrixContainer').innerHTML = '';
+                game.matrix.streams = [];
+                game.matrix.createStreams();
+            }
+        });
+    </script>
+</body>
+</html>
