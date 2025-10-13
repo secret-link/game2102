@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Иллюзия и истина</title>
+    <title>Математическая загадка и Иллюзия</title>
     <style>
         * {
             margin: 0;
@@ -28,12 +28,224 @@
             background: #000;
         }
 
+        #stage0 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 900px;
+            width: 90%;
+            background: url('https://w0.peakpx.com/wallpaper/365/999/HD-wallpaper-anonymous-hack-anonymous-hop-cyber-green-digital.jpg') no-repeat center center fixed;
+            background-size: cover;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.5);
+            border: 2px solid #0f0;
+            z-index: 1000;
+        }
+
+        #stage0 h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 255, 0, 0.5);
+        }
+
+        #stage0 .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        #stage0 .instructions {
+            background-color: rgba(0, 255, 0, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        #stage0 .instructions h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: #ff0;
+        }
+
+        #stage0 .instructions ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        #stage0 .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        #stage0 .puzzle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        #stage0 .grid-table {
+            border-collapse: collapse;
+            margin: 0 auto 30px;
+            font-size: 24px;
+        }
+
+        #stage0 .grid-table td {
+            width: 80px;
+            height: 80px;
+            text-align: center;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        #stage0 .cell {
+            width: 70px;
+            height: 70px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid rgba(0, 255, 0, 0.3);
+            border-radius: 10px;
+            background-color: rgba(0, 255, 0, 0.1);
+            color: #0f0;
+            transition: all 0.3s ease;
+        }
+
+        #stage0 .cell:focus {
+            outline: none;
+            border-color: #ff0;
+            background-color: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
+        }
+
+        #stage0 .operator {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff0;
+            padding: 0 10px;
+        }
+
+        #stage0 .row-result, #stage0 .col-result {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0f0;
+            padding: 0 15px;
+        }
+
+        #stage0 .status {
+            font-size: 20px;
+            margin-left: 10px;
+        }
+
+        #stage0 .valid {
+            color: #0f0;
+        }
+
+        #stage0 .invalid {
+            color: #f00;
+        }
+
+        #stage0 .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        #stage0 button {
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
+        }
+
+        #stage0 .check-button {
+            background-color: #0f0;
+            color: #000;
+            border: 2px solid #0f0;
+        }
+
+        #stage0 .check-button:hover {
+            background-color: #00cc00;
+            transform: translateY(-3px);
+        }
+
+        #stage0 .reset-button {
+            background-color: #000;
+            color: #0f0;
+            border: 2px solid #0f0;
+        }
+
+        #stage0 .reset-button:hover {
+            background-color: #0f0;
+            color: #000;
+            transform: translateY(-3px);
+        }
+
+        #stage0 .message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            min-height: 30px;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        #stage0 .success {
+            background-color: rgba(0, 255, 0, 0.3);
+            color: #0f0;
+        }
+
+        #stage0 .error {
+            background-color: rgba(244, 67, 54, 0.3);
+            color: #f00;
+        }
+
+        @media (max-width: 768px) {
+            #stage0 .grid-table {
+                font-size: 18px;
+            }
+
+            #stage0 .grid-table td {
+                width: 60px;
+                height: 60px;
+            }
+
+            #stage0 .cell {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            #stage0 .operator {
+                font-size: 20px;
+                padding: 0 5px;
+            }
+
+            #stage0 .row-result, #stage0 .col-result {
+                font-size: 18px;
+                padding: 0 10px;
+            }
+        }
+
         .game-interface {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 20, 0, 0.95);
+            background: url('https://www.kaspersky.com/content/en-global/images/repository/isc/2020/examples-of-security-breaches.jpg');
+            background-size: cover;
             padding: 30px;
             border-radius: 15px;
             border: 2px solid #0f0;
@@ -133,7 +345,7 @@
         .submit-btn:hover {
             background: #0f0;
             color: #000;
-            box-shadow: 0 0 20px #0f0;
+            transform: translateY(-2px);
         }
 
         .attempts-counter {
@@ -315,6 +527,22 @@
             opacity: 0.8;
         }
 
+        .flashlight-instruction {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 20, 0, 0.9);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #0f0;
+            color: #0f0;
+            z-index: 1000;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 0 15px #0f0;
+        }
+
         @keyframes fall {
             0% {
                 transform: translateY(-100px);
@@ -381,7 +609,102 @@
 </head>
 <body>
     <div class="container">
-        <div class="game-interface" id="stage1">
+        <!-- Stage 0: 3x3 Mathematical Puzzle -->
+        <div id="stage0">
+            <h1>THINK</h1>
+            <div class="instructions">
+                <h2>ʁиʚоvɔʎ</h2>
+                <ul>
+                    <li>εɐd ниɓо оʞqvоɯ ʁɔqɯɐʚоεqvоuɔи онжvоɓ оvɔиҺ ǝоɓжɐʞ</li>
+                </ul>
+            </div>
+            <div class="puzzle-container">
+                <table class="grid-table">
+                    <!-- Строка 1 -->
+                    <tr>
+                        <td><input type="number" class="cell" id="cell-0-0" min="1" max="9"></td>
+                        <td class="operator">+</td>
+                        <td><input type="number" class="cell" id="cell-0-1" min="1" max="9"></td>
+                        <td class="operator">-</td>
+                        <td><input type="number" class="cell" id="cell-0-2" min="1" max="9"></td>
+                        <td class="operator">=</td>
+                        <td class="row-result">11</td>
+                        <td><span class="status" id="row-0-status"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="operator">+</td>
+                        <td></td>
+                        <td class="operator">+</td>
+                        <td></td>
+                        <td class="operator">+</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <!-- Строка 2 -->
+                    <tr>
+                        <td><input type="number" class="cell" id="cell-1-0" min="1" max="9"></td>
+                        <td class="operator">+</td>
+                        <td><input type="number" class="cell" id="cell-1-1" min="1" max="9"></td>
+                        <td class="operator">-</td>
+                        <td><input type="number" class="cell" id="cell-1-2" min="1" max="9"></td>
+                        <td class="operator">=</td>
+                        <td class="row-result">12</td>
+                        <td><span class="status" id="row-1-status"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="operator">-</td>
+                        <td></td>
+                        <td class="operator">-</td>
+                        <td></td>
+                        <td class="operator">-</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>                   
+                    <!-- Строка 3 -->
+                    <tr>
+                        <td><input type="number" class="cell" id="cell-2-0" min="1" max="9"></td>
+                        <td class="operator">+</td>
+                        <td><input type="number" class="cell" id="cell-2-1" min="1" max="9"></td>
+                        <td class="operator">-</td>
+                        <td><input type="number" class="cell" id="cell-2-2" min="1" max="9"></td>
+                        <td class="operator">=</td>
+                        <td class="row-result">10</td>
+                        <td><span class="status" id="row-2-status"></span></td>
+                    </tr>
+                    <!-- Столбцы -->
+                    <tr>
+                        <td class="col-result">=9</td>
+                        <td></td>
+                        <td class="col-result">=8</td>
+                        <td></td>
+                        <td class="col-result">=4</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span class="status" id="col-0-status"></span></td>
+                        <td></td>
+                        <td><span class="status" id="col-1-status"></span></td>
+                        <td></td>
+                        <td><span class="status" id="col-2-status"></span></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="buttons">
+                <button class="check-button" onclick="checkEquations()">ПРОВЕРИТЬ РЕШЕНИЕ</button>
+                <button class="reset-button" onclick="resetGrid()">ОЧИСТИТЬ ПОЛЕ</button>
+            </div>
+            <div class="message" id="message"></div>
+        </div>
+
+        <!-- Stage 1: Illusion and Truth Game -->
+        <div class="game-interface" id="stage1" style="display: none;">
             <div class="game-title">СЫГРАЙ В ИГРУ</div>
             <div class="instructions">
                 <div class="instruction-section">
@@ -398,20 +721,21 @@
             <div class="input-container">
                 <input type="text" class="number-input" id="numberInput" maxlength="3" placeholder="000" autocomplete="off">
             </div>
-            <button class="submit-btn" onclick="submitGuess()">ЗАПУСТИТЬ СКАНИРОВАНИЕ</button>
+            <button class="submit-btn" id="submitButton">ДЛЯ ПРОВЕРКИ НАЖМИТЕ ENTER</button>
             <div class="attempts-counter">ПОПЫТКИ ВЗЛОМА: <span id="attemptsCount">0</span>/8</div>
             <div class="result-message" id="resultMessage">
                 ВВЕДИТЕ КОД ДЛЯ СКАНИРОВАНИЯ...
             </div>
         </div>
 
-        <div class="flashlight-stage" id="stage2">
+        <!-- Stage 2: Dark Phone Matrix -->
+        <div class="flashlight-stage" id="stage2" style="display: none;">
             <div id="matrixContainer"></div>
             <div class="dark-overlay" id="darkOverlay"></div>
             <div class="floating-notifications" id="floatingNotifications"></div>
             <div class="reset-message" id="resetMessage"></div>
             <div class="completion-message" id="completionMessage"></div>
-            <div class="stage2-stats">
+            <div class="stage2-stats"> 
                 Найдено цифр: <span id="foundCount">0</span>/11<br>
                 Время: <span id="timer">0</span> сек<br>
                 Статус: <span id="status">В темноте</span>
@@ -420,469 +744,646 @@
     </div>
 
     <script>
-        class IllusionAndTruth {
-            constructor() {
-                this.stage1 = document.getElementById('stage1');
-                this.stage2 = document.getElementById('stage2');
-                this.numberInput = document.getElementById('numberInput');
-                this.resultMessage = document.getElementById('resultMessage');
-                this.attemptsCount = document.getElementById('attemptsCount');
-                this.resetMessage = document.getElementById('resetMessage');
-                this.currentNumber = this.generateNumber();
-                this.attempts = 0;
-                this.maxAttempts = 8; // Set to 8 as per HTML
-                this.matrix = null;
+        // Puzzle (Stage 0) Logic
+        function checkEquations() {
+            let allValid = true;
+            let allFilled = true;
+            const usedNumbers = new Set();
+            const messageElement = document.getElementById('message');
 
-                this.init();
+            // Clear previous statuses
+            document.querySelectorAll('.status').forEach(status => {
+                status.textContent = '';
+                status.className = 'status';
+            });
+            messageElement.textContent = '';
+            messageElement.className = 'message';
+
+            // Проверка строк
+            for (let row = 0; row < 3; row++) {
+                const a = parseInt(document.getElementById(`cell-${row}-0`).value) || 0;
+                const b = parseInt(document.getElementById(`cell-${row}-1`).value) || 0;
+                const c = parseInt(document.getElementById(`cell-${row}-2`).value) || 0;
+
+                if (!a || !b || !c) {
+                    allFilled = false;
+                } else {
+                    if (a < 1 || a > 9 || b < 1 || b > 9 || c < 1 || c > 9) {
+                        messageElement.textContent = "Все числа должны быть от 1 до 9";
+                        messageElement.className = "message error";
+                        return;
+                    }
+                    usedNumbers.add(a);
+                    usedNumbers.add(b);
+                    usedNumbers.add(c);
+                }
+
+                const result = a + b - c;
+                const expected = [11, 12, 10][row];
+                const statusElement = document.getElementById(`row-${row}-status`);
+
+                if (a && b && c) {
+                    if (result === expected) {
+                        statusElement.textContent = "✓";
+                        statusElement.className = "status valid";
+                    } else {
+                        statusElement.textContent = "✗";
+                        statusElement.className = "status invalid";
+                        allValid = false;
+                    }
+                }
             }
 
-            init() {
-                this.stage1.style.display = 'block';
-                this.stage2.style.display = 'none';
-                this.numberInput.focus();
-                this.setupProtection();
-                this.setupStage1EventListeners();
+            // Проверка столбцов
+            for (let col = 0; col < 3; col++) {
+                const a = parseInt(document.getElementById(`cell-0-${col}`).value) || 0;
+                const b = parseInt(document.getElementById(`cell-1-${col}`).value) || 0;
+                const c = parseInt(document.getElementById(`cell-2-${col}`).value) || 0;
+
+                if (!a || !b || !c) {
+                    allFilled = false;
+                } else {
+                    if (a < 1 || a > 9 || b < 1 || b > 9 || c < 1 || c > 9) {
+                        messageElement.textContent = "Все числа должны быть от 1 до 9";
+                        messageElement.className = "message error";
+                        return;
+                    }
+                    usedNumbers.add(a);
+                    usedNumbers.add(b);
+                    usedNumbers.add(c);
+                }
+
+                const result = a + b - c;
+                const expected = [9, 8, 4][col];
+                const statusElement = document.getElementById(`col-${col}-status`);
+
+                if (a && b && c) {
+                    if (result === expected) {
+                        statusElement.textContent = "✓";
+                        statusElement.className = "status valid";
+                    } else {
+                        statusElement.textContent = "✗";
+                        statusElement.className = "status invalid";
+                        allValid = false;
+                    }
+                }
             }
 
-            setupProtection() {
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C')) || (e.ctrlKey && e.key === 'u')) {
-                        e.preventDefault();
-                        this.showAccessDenied();
-                    }
-                });
+            const allUnique = usedNumbers.size === 9;
 
-                document.addEventListener('contextmenu', (e) => {
-                    e.preventDefault();
-                    this.showAccessDenied();
-                });
-
-                setInterval(() => {
-                    const widthThreshold = window.outerWidth - window.innerWidth > 100;
-                    const heightThreshold = window.outerHeight - window.innerHeight > 100;
-                    if (widthThreshold || heightThreshold) {
-                        this.showAccessDenied();
+            if (!allFilled) {
+                messageElement.textContent = "Заполните все ячейки числами от 1 до 9";
+                messageElement.className = "message error";
+            } else if (!allUnique) {
+                messageElement.textContent = "Все числа должны быть уникальными (от 1 до 9)";
+                messageElement.className = "message error";
+            } else if (!allValid) {
+                messageElement.textContent = "Некоторые уравнения неверны. Попробуйте еще раз!";
+                messageElement.className = "message error";
+            } else {
+                messageElement.textContent = "Поздравляем! Все уравнения верны! Переход к следующему этапу...";
+                messageElement.className = "message success";
+                
+                // Автоматический переход на следующий этап
+                setTimeout(() => {
+                    if (window.game && typeof window.game.startStage1 === 'function') {
+                        window.game.startStage1();
+                    } else {
+                        console.error('Game not initialized');
                     }
-                }, 1000);
-
-                let element = new Image();
-                Object.defineProperty(element, 'id', {
-                    get: () => {
-                        this.showAccessDenied();
-                    }
-                });
+                }, 2000);
             }
+        }
 
-            showAccessDenied() {
+        function resetGrid() {
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.value = '';
+            });
+            document.querySelectorAll('.status').forEach(status => {
+                status.textContent = '';
+                status.className = 'status';
+            });
+            document.getElementById('message').textContent = '';
+            document.getElementById('message').className = 'message';
+        }
+
+        // Main Game Logic with DarkPhoneMatrix
+        (function() {
+            function showAccessDenied() {
                 const accessDenied = document.createElement('div');
                 accessDenied.className = 'reset-message';
-                accessDenied.innerHTML = '<div>ДОСТУП ЗАПРЕЩЕН!<br>Обнаружена попытка взлома системы!</div>';
+                accessDenied.innerHTML = `
+                    <h2>🚨 ДОСТУП ЗАПРЕЩЕН!</h2>
+                    <p>Система перезагрузится через 3 секунды...</p>
+                `;
                 document.body.appendChild(accessDenied);
                 accessDenied.classList.add('show');
-                this.stage1.style.display = 'none';
-                this.stage2.style.display = 'none';
+                document.getElementById('stage0').style.display = 'none';
+                document.getElementById('stage1').style.display = 'none';
+                document.getElementById('stage2').style.display = 'none';
                 setTimeout(() => {
                     window.location.reload();
                 }, 3000);
             }
 
-            setupStage1EventListeners() {
-                this.numberInput.addEventListener('input', (e) => {
-                    e.target.value = e.target.value.replace(/\D/g, '');
-                    if (e.target.value.length > 3) {
-                        e.target.value = e.target.value.slice(0, 3);
-                    }
-                });
+            class IllusionAndTruth {
+                constructor() {
+                    this.stage0 = document.getElementById('stage0');
+                    this.stage1 = document.getElementById('stage1');
+                    this.stage2 = document.getElementById('stage2');
+                    this.numberInput = document.getElementById('numberInput');
+                    this.resultMessage = document.getElementById('resultMessage');
+                    this.attemptsCount = document.getElementById('attemptsCount');
+                    this.resetMessage = document.getElementById('resetMessage');
+                    this.currentNumber = this.generateNumber();
+                    this.attempts = 0;
+                    this.maxAttempts = 8;
+                    this.matrix = null;
 
-                this.numberInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
+                    this.init();
+                }
+
+                init() {
+                    this.stage0.style.display = 'block';
+                    this.stage1.style.display = 'none';
+                    this.stage2.style.display = 'none';
+                    this.setupProtection();
+                }
+
+                startStage1() {
+                    console.log('Starting Stage 1');
+                    this.stage0.style.display = 'none';
+                    this.stage1.style.display = 'block';
+                    this.stage2.style.display = 'none';
+                    
+                    // Сброс игры при каждом запуске Stage 1
+                    this.currentNumber = this.generateNumber();
+                    this.attempts = 0;
+                    this.attemptsCount.textContent = this.attempts;
+                    this.numberInput.value = '';
+                    this.resultMessage.innerHTML = 'ВВЕДИТЕ КОД ДЛЯ СКАНИРОВАНИЯ...';
+                    this.resultMessage.style.borderColor = '#0f0';
+                    this.resultMessage.style.color = '#0f0';
+                    
+                    this.numberInput.focus();
+                    this.setupStage1EventListeners();
+                    
+                    console.log('Stage 1 started with number:', this.currentNumber);
+                }
+
+                setupProtection() {
+                    document.addEventListener('keydown', (e) => {
+                        if (
+                            e.key === 'F12' ||
+                            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')) ||
+                            (e.ctrlKey && e.key === 'u') ||
+                            (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'c'))
+                        ) {
+                            e.preventDefault();
+                            showAccessDenied();
+                        }
+                    });
+
+                    document.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        showAccessDenied();
+                    });
+                }
+
+                setupStage1EventListeners() {
+                    // Удаляем старые обработчики чтобы избежать дублирования
+                    this.numberInput.removeEventListener('input', this.handleInput);
+                    this.numberInput.removeEventListener('keydown', this.handleKeydown);
+                    document.getElementById('submitButton').removeEventListener('click', this.handleSubmit);
+
+                    // Создаем новые обработчики
+                    this.handleInput = (e) => {
+                        e.target.value = e.target.value.replace(/\D/g, '');
+                        if (e.target.value.length > 3) {
+                            e.target.value = e.target.value.slice(0, 3);
+                        }
+                    };
+
+                    this.handleKeydown = (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.submitGuess();
+                        }
+                    };
+
+                    this.handleSubmit = () => {
                         this.submitGuess();
+                    };
+
+                    // Добавляем обработчики
+                    this.numberInput.addEventListener('input', this.handleInput);
+                    this.numberInput.addEventListener('keydown', this.handleKeydown);
+                    document.getElementById('submitButton').addEventListener('click', this.handleSubmit);
+                }
+
+                generateNumber() {
+                    const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                    const result = [];
+                    for (let i = 0; i < 3; i++) {
+                        const randomIndex = Math.floor(Math.random() * digits.length);
+                        result.push(digits.splice(randomIndex, 1)[0]);
                     }
-                });
-            }
-
-            generateNumber() {
-                const digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-                const result = [];
-                for (let i = 0; i < 3; i++) {
-                    const randomIndex = Math.floor(Math.random() * digits.length);
-                    result.push(digits.splice(randomIndex, 1)[0]);
-                }
-                return result.join('');
-            }
-
-            validateGuess(guess) {
-                if (guess.length !== 3 || !/^\d{3}$/.test(guess)) return false;
-                return new Set(guess.split('')).size === 3;
-            }
-
-            checkGuess(guess) {
-                const target = this.currentNumber.split('');
-                let truth = 0, illusion = 0;
-
-                for (let i = 0; i < 3; i++) {
-                    if (guess[i] === target[i]) {
-                        truth++;
-                    } else if (target.includes(guess[i])) {
-                        illusion++;
-                    }
+                    return result.join('');
                 }
 
-                return { truth, illusion, empty: 3 - truth - illusion };
-            }
-
-            submitGuess() {
-                const guess = this.numberInput.value.trim();
-                if (!this.validateGuess(guess)) {
-                    this.showResult('ОШИБКА: ВВЕДИТЕ РОВНО 3 УНИКАЛЬНЫЕ ЦИФРЫ', 'error');
-                    return;
+                validateGuess(guess) {
+                    if (guess.length !== 3 || !/^\d{3}$/.test(guess)) return false;
+                    return new Set(guess.split('')).size === 3;
                 }
 
-                this.attempts++;
-                this.attemptsCount.textContent = this.attempts;
+                checkGuess(guess) {
+                    const target = this.currentNumber.split('');
+                    let truth = 0, illusion = 0;
 
-                const result = this.checkGuess(guess);
-                let message = '';
-                if (result.truth === 0 && result.illusion === 0) {
-                    message = 'СТАТУС: ПУСТО<br><small>Сигнал не обнаружен</small>';
-                } else {
-                    const truthText = result.truth > 0 ? `${result.truth} ИСТИН${this.getEnding(result.truth, 'А', 'Ы', '')}` : '';
-                    const illusionText = result.illusion > 0 ? `${result.illusion} ИЛЛЮЗИ${this.getEnding(result.illusion, 'Я', 'Й', 'Й')}` : '';
-                    message = `СТАТУС: ${truthText}${truthText && illusionText ? ' И ' : ''}${illusionText}<br><small>Анализ сигнала...</small>`;
-                }
-                this.showResult(message, 'info');
-
-                if (result.truth === 3) {
-                    this.showStage1Completion();
-                    return;
-                }
-
-                if (this.attempts >= this.maxAttempts) {
-                    this.showResetMessage();
-                    setTimeout(() => {
-                        window.location.reload(); // Reload page to start new game
-                    }, 3000);
-                    return;
-                }
-
-                this.numberInput.value = '';
-                this.numberInput.focus();
-            }
-
-            getEnding(number, one, two, five) {
-                number = Math.abs(number);
-                number %= 100;
-                if (number >= 5 && number <= 20) return five;
-                number %= 10;
-                if (number === 1) return one;
-                if (number >= 2 && number <= 4) return two;
-                return five;
-            }
-
-            showResult(message, type) {
-                const colors = { error: '#f00', info: '#0f0', warning: '#ff0' };
-                this.resultMessage.innerHTML = message;
-                this.resultMessage.style.borderColor = colors[type] || '#0f0';
-                this.resultMessage.style.color = colors[type] || '#0f0';
-            }
-
-            showStage1Completion() {
-                this.resetMessage.innerHTML = `
-                    <h2>УРОВЕНЬ 1 ПРОЙДЕН!</h2>
-                    <p>Код доступа: <strong style="color: #ff0; font-size: 32px;">${this.currentNumber}</strong></p>
-                    <p>Попыток взлома: ${this.attempts}</p>
-                    <p style="font-size: 16px; margin-top: 20px; color: #0f0;">
-                        АКТИВИРОВАН РЕЖИМ СКАНИРОВАНИЯ
-                    </p>
-                    <p style="font-size: 14px; margin-top: 10px;">
-                        Переход на Уровень 2...
-                    </p>
-                `;
-                this.resetMessage.classList.add('show');
-                this.resetMessage.style.borderColor = '#0f0';
-                this.resetMessage.style.color = '#0f0';
-                setTimeout(() => {
-                    this.resetMessage.classList.remove('show');
-                    this.startStage2();
-                }, 4000);
-            }
-
-            showResetMessage() {
-                this.resetMessage.innerHTML = `
-                    <h2>🚨 СБОЙ В СИСТЕМЕ</h2>
-                    <p>ПРЕВЫШЕН ЛИМИТ ПОПЫТОК</p>
-                    <p style="font-size: 14px; margin-top: 15px;">
-                        Система перезагрузится через 3 секунды...
-                    </p>
-                `;
-                this.resetMessage.classList.add('show');
-            }
-
-            startStage2() {
-                this.stage1.style.display = 'none';
-                this.stage2.style.display = 'block';
-                this.matrix = new DarkPhoneMatrix();
-            }
-        }
-
-        class DarkPhoneMatrix {
-            constructor() {
-                this.container = document.getElementById('matrixContainer');
-                this.darkOverlay = document.getElementById('darkOverlay');
-                this.floatingNotifications = document.getElementById('floatingNotifications');
-                this.resetMessage = document.getElementById('resetMessage');
-                this.completionMessage = document.getElementById('completionMessage');
-                this.streams = [];
-                this.foundDigits = [];
-                this.currentDigitIndex = 0;
-                this.phoneNumber = '89124365870';
-                this.phoneDigits = this.phoneNumber.split('');
-                this.currentDigit = this.phoneDigits[this.currentDigitIndex];
-                this.startTime = Date.now();
-                this.isFlashlightActive = false;
-                this.typedWord = '';
-                this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                this.isRunning = true;
-
-                this.init();
-            }
-
-            init() {
-                this.setupEventListeners();
-                this.createStreams();
-                this.startTimers();
-                this.updateStats();
-            }
-
-            setupEventListeners() {
-                document.addEventListener('mousemove', (e) => {
-                    this.updateMousePosition(e.clientX, e.clientY);
-                });
-
-                document.addEventListener('keydown', (e) => {
-                    if (e.key.length === 1) {
-                        this.typedWord += e.key.toLowerCase();
-                        if (this.typedWord.slice(-5) === 'light') {
-                            this.activateFlashlight();
-                            this.typedWord = '';
-                        }
-                        if (this.typedWord.length > 10) {
-                            this.typedWord = this.typedWord.slice(-10);
+                    for (let i = 0; i < 3; i++) {
+                        if (guess[i] === target[i]) {
+                            truth++;
+                        } else if (target.includes(guess[i])) {
+                            illusion++;
                         }
                     }
-                });
-            }
 
-            updateMousePosition(x, y) {
-                if (this.isFlashlightActive) {
-                    this.darkOverlay.style.setProperty('--mouse-x', x + 'px');
-                    this.darkOverlay.style.setProperty('--mouse-y', y + 'px');
+                    return { truth, illusion, empty: 3 - truth - illusion };
                 }
-                this.highlightNearbyStreams(x, y);
-            }
 
-            highlightNearbyStreams(mouseX, mouseY) {
-                if (!this.isFlashlightActive) return;
-                const highlightRadius = 80;
-                this.streams.forEach(streamData => {
-                    const streamRect = streamData.element.getBoundingClientRect();
-                    const streamX = streamRect.left + streamRect.width / 2;
-                    const streamY = streamRect.top + streamRect.height / 2;
-                    const distance = Math.sqrt(
-                        Math.pow(streamX - mouseX, 2) + Math.pow(streamY - mouseY, 2)
-                    );
-                    if (distance < highlightRadius) {
-                        streamData.element.classList.add('active');
-                    } else {
-                        streamData.element.classList.remove('active');
+                submitGuess() {
+                    const guess = this.numberInput.value.trim();
+                    if (!this.validateGuess(guess)) {
+                        this.showResult('ОШИБКА: ВВЕДИТЕ РОВНО 3 УНИКАЛЬНЫЕ ЦИФРЫ', 'error');
+                        return;
                     }
-                });
-            }
 
-            handleDigitClick(clickedDigit, streamData) {
-                if (clickedDigit === this.currentDigit) {
-                    this.foundDigits.push(clickedDigit);
-                    this.showFloatingNotification(clickedDigit, this.foundDigits.length, true);
-                    streamData.element.classList.add('found');
-                    streamData.element.classList.remove('active');
-                    this.currentDigitIndex++;
-                    if (this.currentDigitIndex < this.phoneDigits.length) {
-                        this.currentDigit = this.phoneDigits[this.currentDigitIndex];
-                        this.updateStats();
+                    this.attempts++;
+                    this.attemptsCount.textContent = this.attempts;
+
+                    const result = this.checkGuess(guess);
+                    let message = '';
+                    if (result.truth === 0 && result.illusion === 0) {
+                        message = 'СТАТУС: ПУСТО<br><small>Сигнал не обнаружен</small>';
                     } else {
+                        const truthText = result.truth > 0 ? `${result.truth} ИСТИН${this.getEnding(result.truth, 'А', 'Ы', '')}` : '';
+                        const illusionText = result.illusion > 0 ? `${result.illusion} ИЛЛЮЗИ${this.getEnding(result.illusion, 'Я', 'Й', 'Й')}` : '';
+                        message = `СТАТУС: ${truthText}${truthText && illusionText ? ' И ' : ''}${illusionText}<br><small>Анализ сигнала...</small>`;
+                    }
+                    this.showResult(message, 'info');
+
+                    // Если число угадано (3 истины) - переход на 3 уровень
+                    if (result.truth === 3) {
+                        console.log('Number guessed correctly! Starting Stage 2...');
+                        this.showStage1Completion();
+                        return;
+                    }
+
+                    // Если превышено количество попыток - перезапуск Stage 1
+                    if (this.attempts >= this.maxAttempts) {
+                        this.showResetMessage();
                         setTimeout(() => {
-                            this.showCompletionMessage();
-                        }, 1000);
+                            this.startStage1(); // Перезапускаем Stage 1 вместо перезагрузки страницы
+                        }, 3000);
+                        return;
                     }
-                } else {
-                    this.showFloatingNotification(clickedDigit, this.foundDigits.length, false);
-                    streamData.element.classList.add('wrong');
+
+                    this.numberInput.value = '';
+                    this.numberInput.focus();
+                }
+
+                getEnding(number, one, two, five) {
+                    number = Math.abs(number);
+                    number %= 100;
+                    if (number >= 5 && number <= 20) return five;
+                    number %= 10;
+                    if (number === 1) return one;
+                    if (number >= 2 && number <= 4) return two;
+                    return five;
+                }
+
+                showResult(message, type) {
+                    const colors = { error: '#f00', info: '#0f0', warning: '#ff0' };
+                    this.resultMessage.innerHTML = message;
+                    this.resultMessage.style.borderColor = colors[type] || '#0f0';
+                    this.resultMessage.style.color = colors[type] || '#0f0';
+                }
+
+                showStage1Completion() {
+                    console.log('Showing Stage 1 completion message');
+                    this.resetMessage.innerHTML = `
+                        <h2>УРОВЕНЬ 2 ПРОЙДЕН!</h2>
+                        <p>Код доступа: <strong style="color: #ff0; font-size: 32px;">${this.currentNumber}</strong></p>
+                        <p>Попыток взлома: ${this.attempts}</p>
+                        <p style="font-size: 16px; margin-top: 20px; color: #0f0;">
+                            АКТИВИРОВАН РЕЖИМ СКАНИРОВАНИЯ
+                        </p>
+                        <p style="font-size: 14px; margin-top: 10px;">
+                            Переход на Уровень 3...
+                        </p>
+                    `;
+                    this.resetMessage.classList.add('show');
+                    this.resetMessage.style.borderColor = '#0f0';
+                    this.resetMessage.style.color = '#0f0';
                     setTimeout(() => {
-                        streamData.element.classList.remove('wrong');
-                    }, 500);
-                    this.showResetMessage();
-                    setTimeout(() => {
-                        this.resetGame();
-                    }, 3000);
+                        this.resetMessage.classList.remove('show');
+                        this.startStage2();
+                    }, 4000);
+                }
+
+                showResetMessage() {
+                    this.resetMessage.innerHTML = `
+                        <h2>🚨 СБОЙ В СИСТЕМЕ</h2>
+                        <p>ПРЕВЫШЕН ЛИМИТ ПОПЫТОК (8/8)</p>
+                        <p style="font-size: 14px; margin-top: 15px;">
+                            Перезапуск игры через 3 секунды...
+                        </p>
+                    `;
+                    this.resetMessage.classList.add('show');
+                }
+
+                startStage2() {
+                    console.log('Starting Stage 2');
+                    this.stage1.style.display = 'none';
+                    this.stage2.style.display = 'block';
+                    this.matrix = new DarkPhoneMatrix();
                 }
             }
 
-            showFloatingNotification(digit, count, isCorrect) {
-                const notification = document.createElement('div');
-                notification.className = `floating-notification ${isCorrect ? '' : 'wrong'}`;
-                notification.textContent = isCorrect
-                    ? `✅ Найдена цифра ${digit} (${count}/11)`
-                    : `❌ Ошибка! Неверная цифра`;
-                this.floatingNotifications.appendChild(notification);
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
+            class DarkPhoneMatrix {
+                constructor() {
+                    this.container = document.getElementById('matrixContainer');
+                    this.darkOverlay = document.getElementById('darkOverlay');
+                    this.floatingNotifications = document.getElementById('floatingNotifications');
+                    this.resetMessage = document.getElementById('resetMessage');
+                    this.completionMessage = document.getElementById('completionMessage');
+                    this.streams = [];
+                    this.foundDigits = [];
+                    this.currentDigitIndex = 0;
+                    this.phoneNumber = '89124365870';
+                    this.phoneDigits = this.phoneNumber.split('');
+                    this.currentDigit = this.phoneDigits[this.currentDigitIndex];
+                    this.startTime = Date.now();
+                    this.isFlashlightActive = false;
+                    this.typedWord = '';
+                    this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    this.isRunning = true;
+
+                    this.init();
+                }
+
+                init() {
+                    this.setupEventListeners();
+                    this.createStreams();
+                    this.startTimers();
+                    this.updateStats();
+                }
+
+                setupEventListeners() {
+                    document.addEventListener('mousemove', (e) => {
+                        this.updateMousePosition(e.clientX, e.clientY);
+                    });
+
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key.length === 1) {
+                            this.typedWord += e.key.toLowerCase();
+                            if (this.typedWord.slice(-5) === 'light') {
+                                this.activateFlashlight();
+                                this.typedWord = '';
+                            }
+                            if (this.typedWord.length > 10) {
+                                this.typedWord = this.typedWord.slice(-10);
+                            }
+                        }
+                    });
+                }
+
+                updateMousePosition(x, y) {
+                    if (this.isFlashlightActive) {
+                        this.darkOverlay.style.setProperty('--mouse-x', x + 'px');
+                        this.darkOverlay.style.setProperty('--mouse-y', y + 'px');
                     }
-                }, 3000);
-            }
+                    this.highlightNearbyStreams(x, y);
+                }
 
-            showResetMessage() {
-                this.resetMessage.innerHTML = `
-                    <h2>🚨 СБОЙ В СИСТЕМЕ</h2>
-                    <p>Неверная цифра!</p>
-                    <p>Игра перезапустится через 3 секунды...</p>
-                `;
-                this.resetMessage.classList.add('show');
-            }
-
-            resetGame() {
-                this.resetMessage.classList.remove('show');
-                this.foundDigits = [];
-                this.currentDigitIndex = 0;
-                this.currentDigit = this.phoneDigits[this.currentDigitIndex];
-                this.startTime = Date.now();
-                this.streams.forEach(streamData => {
-                    streamData.element.classList.remove('found', 'active', 'wrong');
-                });
-                this.updateStats();
-            }
-
-            createStreams() {
-                const screenWidth = window.innerWidth;
-                const columnWidth = screenWidth / 11;
-                for (let columnIndex = 0; columnIndex < 11; columnIndex++) {
-                    const digit = this.phoneDigits[columnIndex];
-                    const columnPosition = (columnIndex * columnWidth) + (columnWidth / 2);
-                    const stream = document.createElement('div');
-                    stream.className = 'stream';
-                    const positionVariation = (Math.random() - 0.5) * (columnWidth - 30);
-                    stream.style.left = (columnPosition + positionVariation) + 'px';
-                    const duration = 8 + Math.random() * 6;
-                    stream.style.animationDuration = duration + 's';
-                    stream.style.animationDelay = Math.random() * 5 + 's';
-                    const textLength = 15 + Math.floor(Math.random() * 10);
-                    let content = '';
-                    const digitPosition = Math.floor(Math.random() * textLength);
-                    for (let i = 0; i < textLength; i++) {
-                        if (i === digitPosition) {
-                            content += `<span class="phone-digit">${digit}</span>`;
+                highlightNearbyStreams(mouseX, mouseY) {
+                    if (!this.isFlashlightActive) return;
+                    const highlightRadius = 80;
+                    this.streams.forEach(streamData => {
+                        const streamRect = streamData.element.getBoundingClientRect();
+                        const streamX = streamRect.left + streamRect.width / 2;
+                        const streamY = streamRect.top + streamRect.height / 2;
+                        const distance = Math.sqrt(
+                            Math.pow(streamX - mouseX, 2) + Math.pow(streamY - mouseY, 2)
+                        );
+                        if (distance < highlightRadius) {
+                            streamData.element.classList.add('active');
                         } else {
+                            streamData.element.classList.remove('active');
+                        }
+                    });
+                }
+
+                handleDigitClick(clickedDigit, streamData) {
+                    if (clickedDigit === this.currentDigit) {
+                        this.foundDigits.push(clickedDigit);
+                        this.showFloatingNotification(clickedDigit, this.foundDigits.length, true);
+                        streamData.element.classList.add('found');
+                        streamData.element.classList.remove('active');
+                        this.currentDigitIndex++;
+                        if (this.currentDigitIndex < this.phoneDigits.length) {
+                            this.currentDigit = this.phoneDigits[this.currentDigitIndex];
+                            this.updateStats();
+                        } else {
+                            setTimeout(() => {
+                                this.showCompletionMessage();
+                            }, 1000);
+                        }
+                    } else {
+                        this.showFloatingNotification(clickedDigit, this.foundDigits.length, false);
+                        streamData.element.classList.add('wrong');
+                        setTimeout(() => {
+                            streamData.element.classList.remove('wrong');
+                        }, 500);
+                        this.showResetMessage();
+                        setTimeout(() => {
+                            this.resetGame();
+                        }, 3000);
+                    }
+                }
+
+                showFloatingNotification(digit, count, isCorrect) {
+                    const notification = document.createElement('div');
+                    notification.className = `floating-notification ${isCorrect ? '' : 'wrong'}`;
+                    notification.textContent = isCorrect
+                        ? `✅ Найдена цифра ${digit} (${count}/11)`
+                        : `❌ Ошибка! Неверная цифра`;
+                    this.floatingNotifications.appendChild(notification);
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 3000);
+                }
+
+                showResetMessage() {
+                    this.resetMessage.innerHTML = `
+                        <h2>🚨 СБОЙ В СИСТЕМЕ</h2>
+                        <p>Неверная цифра!</p>
+                        <p>Игра перезапустится через 3 секунды...</p>
+                    `;
+                    this.resetMessage.classList.add('show');
+                }
+
+                resetGame() {
+                    this.resetMessage.classList.remove('show');
+                    this.foundDigits = [];
+                    this.currentDigitIndex = 0;
+                    this.currentDigit = this.phoneDigits[this.currentDigitIndex];
+                    this.startTime = Date.now();
+                    this.streams.forEach(streamData => {
+                        streamData.element.classList.remove('found', 'active', 'wrong');
+                    });
+                    this.updateStats();
+                }
+
+                createStreams() {
+                    const screenWidth = window.innerWidth;
+                    const columnWidth = screenWidth / 11;
+                    for (let columnIndex = 0; columnIndex < 11; columnIndex++) {
+                        const digit = this.phoneDigits[columnIndex];
+                        const columnPosition = (columnIndex * columnWidth) + (columnWidth / 2);
+                        const stream = document.createElement('div');
+                        stream.className = 'stream';
+                        const positionVariation = (Math.random() - 0.5) * (columnWidth - 30);
+                        stream.style.left = (columnPosition + positionVariation) + 'px';
+                        const duration = 8 + Math.random() * 6;
+                        stream.style.animationDuration = duration + 's';
+                        stream.style.animationDelay = Math.random() * 5 + 's';
+                        const textLength = 15 + Math.floor(Math.random() * 10);
+                        let content = '';
+                        const digitPosition = Math.floor(Math.random() * textLength);
+                        for (let i = 0; i < textLength; i++) {
+                            if (i === digitPosition) {
+                                content += `<span class="phone-digit">${digit}</span>`;
+                            } else {
+                                const randomChar = this.chars[Math.floor(Math.random() * this.chars.length)];
+                                content += randomChar;
+                            }
+                        }
+                        stream.innerHTML = content;
+                        stream.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.handleDigitClick(digit, { element: stream });
+                        });
+                        this.container.appendChild(stream);
+                        this.streams.push({
+                            element: stream,
+                            digit: digit,
+                            columnIndex: columnIndex
+                        });
+                    }
+                    this.createBackgroundStreams();
+                }
+
+                createBackgroundStreams() {
+                    const screenWidth = window.innerWidth;
+                    const columnWidth = screenWidth / 11;
+                    const backgroundStreamCount = 20;
+                    for (let i = 0; i < backgroundStreamCount; i++) {
+                        const stream = document.createElement('div');
+                        stream.className = 'stream';
+                        const randomColumn = Math.floor(Math.random() * 11);
+                        const columnPosition = (randomColumn * columnWidth) + (columnWidth / 2);
+                        const positionVariation = (Math.random() - 0.5) * (columnWidth - 30);
+                        stream.style.left = (columnPosition + positionVariation) + 'px';
+                        const duration = 6 + Math.random() * 8;
+                        stream.style.animationDuration = duration + 's';
+                        stream.style.animationDelay = Math.random() * 10 + 's';
+                        const textLength = 20 + Math.floor(Math.random() * 15);
+                        let content = '';
+                        for (let j = 0; j < textLength; j++) {
                             const randomChar = this.chars[Math.floor(Math.random() * this.chars.length)];
                             content += randomChar;
                         }
+                        stream.innerHTML = content;
+                        stream.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.handleDigitClick('', { element: stream });
+                        });
+                        this.container.appendChild(stream);
+                        this.streams.push({ element: stream });
                     }
-                    stream.innerHTML = content;
-                    stream.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.handleDigitClick(digit, { element: stream });
-                    });
-                    this.container.appendChild(stream);
-                    this.streams.push({
-                        element: stream,
-                        digit: digit,
-                        columnIndex: columnIndex
-                    });
                 }
-                this.createBackgroundStreams();
-            }
 
-            createBackgroundStreams() {
-                const screenWidth = window.innerWidth;
-                const columnWidth = screenWidth / 11;
-                const backgroundStreamCount = 20;
-                for (let i = 0; i < backgroundStreamCount; i++) {
-                    const stream = document.createElement('div');
-                    stream.className = 'stream';
-                    const randomColumn = Math.floor(Math.random() * 11);
-                    const columnPosition = (randomColumn * columnWidth) + (columnWidth / 2);
-                    const positionVariation = (Math.random() - 0.5) * (columnWidth - 30);
-                    stream.style.left = (columnPosition + positionVariation) + 'px';
-                    const duration = 6 + Math.random() * 8;
-                    stream.style.animationDuration = duration + 's';
-                    stream.style.animationDelay = Math.random() * 10 + 's';
-                    const textLength = 20 + Math.floor(Math.random() * 15);
-                    let content = '';
-                    for (let j = 0; j < textLength; j++) {
-                        const randomChar = this.chars[Math.floor(Math.random() * this.chars.length)];
-                        content += randomChar;
-                    }
-                    stream.innerHTML = content;
-                    stream.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.handleDigitClick('', { element: stream });
-                    });
-                    this.container.appendChild(stream);
-                    this.streams.push({ element: stream });
+                startTimers() {
+                    setInterval(() => {
+                        if (this.isRunning) {
+                            const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                            document.getElementById('timer').textContent = elapsed;
+                        }
+                    }, 1000);
+                }
+
+                updateStats() {
+                    document.getElementById('foundCount').textContent = this.foundDigits.length;
+                    document.getElementById('status').textContent = this.isFlashlightActive ? 'Фонарик активирован' : 'В темноте';
+                }
+
+                activateFlashlight() {
+                    this.isFlashlightActive = true;
+                    document.body.classList.add('flashlight-active');
+                    this.darkOverlay.classList.add('flashlight-active');
+                    document.getElementById('status').textContent = 'Фонарик активирован';
+                    document.getElementById('flashlightInstruction').style.display = 'none';
+                    this.showFloatingNotification('🔦 ФОНАРИК АКТИВИРОВАН', this.foundDigits.length, true);
+                }
+
+                showCompletionMessage() {
+                    this.completionMessage.innerHTML = `
+                        <h2>ВЫ СОБРАЛИ ВЕСЬ НОМЕР!</h2>
+                        <p style="font-size: 28px; margin: 20px 0; color: #ff0;">${this.phoneNumber}</p>
+                        <p>ПОЗДРАВЛЯЕМ ВАС!</p>
+                        <p style="font-size: 16px; margin-top: 15px; opacity: 0.8;">
+                            Время: ${Math.floor((Date.now() - this.startTime) / 1000)} секунд
+                        </p>
+                    `;
+                    this.completionMessage.classList.add('show');
+                    this.isRunning = false;
                 }
             }
 
-            startTimers() {
-                setInterval(() => {
-                    if (this.isRunning) {
-                        const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
-                        document.getElementById('timer').textContent = elapsed;
-                    }
-                }, 1000);
+            // Инициализация игры
+            window.game = new IllusionAndTruth();
+
+            window.submitGuess = function() {
+                if (window.game && typeof window.game.submitGuess === 'function') {
+                    window.game.submitGuess();
+                } else {
+                    console.error('Игра не инициализирована');
+                }
             }
 
-            updateStats() {
-                document.getElementById('foundCount').textContent = this.foundDigits.length;
-                document.getElementById('status').textContent = this.isFlashlightActive ? 'Фонарик активирован' : 'В темноте';
+            window.startStage1 = function() {
+                if (window.game && typeof window.game.startStage1 === 'function') {
+                    window.game.startStage1();
+                }
             }
 
-            activateFlashlight() {
-                this.isFlashlightActive = true;
-                document.body.classList.add('flashlight-active');
-                this.darkOverlay.classList.add('flashlight-active');
-                document.getElementById('status').textContent = 'Фонарик активирован';
-                this.showFloatingNotification('🔦 ФОНАРИК АКТИВИРОВАН', this.foundDigits.length, true);
+            window.startStage2 = function() {
+                if (window.game && typeof window.game.startStage2 === 'function') {
+                    window.game.startStage2();
+                }
             }
 
-            showCompletionMessage() {
-                this.completionMessage.innerHTML = `
-                    <h2>ВЫ СОБРАЛИ ВЕСЬ НОМЕР!</h2>
-                    <p style="font-size: 28px; margin: 20px 0; color: #ff0;">${this.phoneNumber}</p>
-                    <p>ПОЗДРАВЛЯЕМ ВАС!</p>
-                    <p style="font-size: 16px; margin-top: 15px; opacity: 0.8;">
-                        Время: ${Math.floor((Date.now() - this.startTime) / 1000)} секунд
-                    </p>
-                `;
-                this.completionMessage.classList.add('show');
-                this.isRunning = false;
-            }
-        }
-
-        let game;
-        window.addEventListener('load', () => {
-            game = new IllusionAndTruth();
-        });
-
-        function submitGuess() {
-            game.submitGuess();
-        }
-
-        window.addEventListener('resize', () => {
-            if (game.matrix && game.matrix.isRunning) {
-                document.getElementById('matrixContainer').innerHTML = '';
-                game.matrix.streams = [];
-                game.matrix.createStreams();
-            }
-        });
+            window.addEventListener('resize', () => {
+                if (window.game && window.game.matrix && window.game.matrix.isRunning) {
+                    document.getElementById('matrixContainer').innerHTML = '';
+                    window.game.matrix.streams = [];
+                    window.game.matrix.createStreams();
+                }
+            });
+        })();
     </script>
 </body>
 </html>
